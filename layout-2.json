@@ -1,0 +1,43 @@
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1021,
+       "width": 1920,
+       "x": 0,
+       "y": 39
+    },
+    "name": "Spotify Premium - Linux Preview",
+    "percent": 0.5,
+    "swallows": [
+       {
+           "class": "Spotify",
+       // "instance": "^spotify$",
+       // "title": "^Spotify\\ Premium\\ \\-\\ Linux\\ Preview$"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 1042,
+       "width": 958,
+       "x": 0,
+       "y": 18
+    },
+    "name": "Inbox - nchinda2@gmail.com - Gmail - Google Chrome",
+    "percent": 0.5,
+    "swallows": [
+       {
+           "class": "Google-chrome",
+       // "instance": "^Google\\-chrome$",
+       // "title": "^Inbox\\ \\-\\ nchinda2\\@gmail\\.com\\ \\-\\ Gmail\\ \\-\\ Google\\ Chrome$",
+       // "window_role": "^browser$"
+       }
+    ],
+    "type": "con"
+}
+

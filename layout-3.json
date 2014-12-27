@@ -1,0 +1,43 @@
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 613,
+       "width": 747,
+       "x": 0,
+       "y": 0
+    },
+    "name": "Python 2.7.9 Shell",
+    "percent": 0.5,
+    "swallows": [
+       {
+       // "class": "Toplevel",
+       // "instance": "^140406841975368$",
+           "title": "Python 2.7.9 Shell"
+       }
+    ],
+    "type": "con"
+}
+
+{
+    "border": "normal",
+    "floating": "auto_off",
+    "geometry": {
+       "height": 434,
+       "width": 735,
+       "x": 0,
+       "y": 0
+    },
+    "name": "firescar96@HotMess: ~",
+    "percent": 0.5,
+    "swallows": [
+       {
+           "class": "Gnome-terminal",
+       // "instance": "^gnome\\-terminal\\-server$",
+       // "title": "^firescar96\\@HotMess\\:\\ \\~$",
+       // "window_role": "^gnome\\-terminal\\-window\\-8006789e\\-0552\\-4810\\-8de3\\-1845f91644dd$"
+       }
+    ],
+    "type": "con"
+}
+

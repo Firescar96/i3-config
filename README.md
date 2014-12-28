@@ -41,9 +41,9 @@ Notes
 ====
 -many of these commands require root access, add a line like this to your sudoers file:
 
-firescar96 ALL=(ALL) NOPASSWD: /home/firescar96/.i3/*
+    firescar96 ALL=(ALL) NOPASSWD: /home/firescar96/.i3/*
 
-where "firescar96" is your username
+ofc where "firescar96" is your username
 
 -gnome-scrensaver images can be found in /usr/share/images/desktop-base/.
 

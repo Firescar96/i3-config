@@ -3,32 +3,12 @@
 SLEEP_TIME=5   # Default time between checks.
 SAFE_PERCENT=30  # Still safe at this level.
 DANGER_PERCENT=15  # Warn when battery at this level.
-CRITICAL_PERCENT=5  # Hibernate when battery at this level.
- 
-NAGBAR_PID=0
+CRITICAL_PERCENT=7  # Final Notice when battery at this level.
+HIBERNATE_PERCENT=5 #Hibernate at this level
+
 export DISPLAY=:0.0
  
-function launchNagBar
-{
-    i3-nagbar -m 'Battery low!' -b 'Hibernate!' 'pm-hibernate' >/dev/null 2>&1 &
-    NAGBAR_PID=$!
-}
- 
-function killNagBar
-{
-    if [[ $NAGBAR_PID -ne 0 ]]; then
-        ps -p $NAGBAR_PID | grep "i3-nagbar"
-        if [[ $? -eq 0 ]]; then
-            kill $NAGBAR_PID
-        fi
-        NAGBAR_PID=0
-    fi
-}
- 
- 
 while [ true ]; do
- 
-    killNagBar
  
     if [[ -n $(acpi -b | grep -i discharging) ]]; then
         pm-powersave true
@@ -40,10 +20,14 @@ while [ true ]; do
             SLEEP_TIME=5
             if [[ $rem_bat -le $DANGER_PERCENT ]]; then
                 SLEEP_TIME=2
-                launchNagBar
+                notify-send -u critical -c battery "Battery Low" "$DANGER_PERCENT Remaining"
             fi
             if [[ $rem_bat -le $CRITICAL_PERCENT ]]; then
-                SLEEP_TIME=1
+                SLEEP_TIME=2
+		notify-send -u critical -c battery "Battery Critical" "Hibernating now"
+            fi
+	    if [[ $rem_bat -le $HIBERNATE_PERCENT ]]; then
+                SLEEP_TIME=2
                 pm-hibernate
             fi
         fi

@@ -3,7 +3,7 @@ i3-config
 
 My system config (minus some system edits) for Debian/i3 on an ASUS-Q55L0F.
 
-Requires
+Requires (in no particular order)
 ========
 gnome
 
@@ -25,6 +25,8 @@ pactl
 
 xfce4-terminal
 
+pm-utils
+
 Highlights
 ==========
 -Uses xfce4-terminal because I prefer a clear terminal over my desktop background
@@ -37,6 +39,12 @@ Highlights
 
 Notes
 ====
+-many of these commands require root access, add a line like this to your sudoers file:
+
+firescar96 ALL=(ALL) NOPASSWD: /home/firescar96/.i3/*
+
+where "firescar96" is your username
+
 -gnome-scrensaver images can be found in /usr/share/images/desktop-base/.
 
 -xscreensaver cannot be started after gnome-screensaver so I modified /etc/acpi/lid.sh with the script included here

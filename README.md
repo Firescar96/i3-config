@@ -38,5 +38,7 @@ Highlights
 Notes
 ====
 -gnome-scrensaver images can be found in /usr/share/images/desktop-base/.
+
 -xscreensaver cannot be started after gnome-screensaver so I modified /etc/acpi/lid.sh with the script included here
+
 -the layouts file is currently broken

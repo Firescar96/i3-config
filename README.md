@@ -27,6 +27,8 @@ xfce4-terminal
 
 pm-utils
 
+libnotify-bin
+
 Highlights
 ==========
 -Uses xfce4-terminal because I prefer a clear terminal over my desktop background
@@ -36,6 +38,8 @@ Highlights
 -Uses Fn/Super+special keys to run keyboard lights, backlight, and volume
 
 -When HDMI display attached even workspaces default to it
+
+-Finally I can use one hand to control the volume by utilizing the right Control key
 
 Notes
 ====

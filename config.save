@@ -29,7 +29,6 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec xfce4-terminal
-bindsym Mod2+Return exec xfce4-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -174,16 +173,13 @@ bindsym $super+F6 exec xbacklight -steps 1 -time 0 -inc 5
 # show battery stats
 bindsym XF86Battery exec gnome-power-statistics
 
-#Natural Audio Controls
+#NaturalControl Audio Controls
 bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
 bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
 bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $super+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
 bindsym $super+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
 bindsym $super+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym Control+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
-bindsym Control+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
-bindsym Control+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 #Screensaver
 exec_always --no-startup-id ~/.i3/BlankBurner
@@ -211,8 +207,8 @@ bindsym $super+$mod+right move workspace to output right
 bindsym $super+$mod+up move workspace to output up
 bindsym $super+$mod+down move workspace to output down
 
-#Settings
-bindsym Control+$mod+s exec gnome-control-center
+#Settings Menu
+bindsym 
 
 #i3 Graphics Config
 hide_edge_borders both

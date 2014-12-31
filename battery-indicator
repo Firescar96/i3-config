@@ -9,7 +9,6 @@ HIBERNATE_PERCENT=5 #Hibernate at this level
 export DISPLAY=:0.0
  
 while [ true ]; do
- 
     if [[ -n $(acpi -b | grep -i discharging) ]]; then
         pm-powersave true
         rem_bat=$(acpi -b | grep -Eo "[0-9]+%" | grep -Eo "[0-9]+")
@@ -20,7 +19,7 @@ while [ true ]; do
             SLEEP_TIME=5
             if [[ $rem_bat -le $DANGER_PERCENT ]]; then
                 SLEEP_TIME=2
-                notify-send -u critical -c battery "Battery Low" "$DANGER_PERCENT Remaining"
+                notify-send -u critical -c battery "Battery Low" "$rem_bat% Remaining"
             fi
             if [[ $rem_bat -le $CRITICAL_PERCENT ]]; then
                 SLEEP_TIME=2

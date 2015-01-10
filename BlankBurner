@@ -1,3 +1,2 @@
 xscreensaver&
-gnome-screensaver&
 xautolock -time 15 -locker "i3lock -de -i ~/Pictures/forestfire.png" &

@@ -29,7 +29,7 @@ floating_modifier $mod
 
 # start a terminal
 bindsym $mod+Return exec xfce4-terminal
-bindsym Mod2+Return exec xfce4-terminal
+#bindsym Mod2+Return exec xfce4-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -92,7 +92,7 @@ bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 #Application Specific
-for_window [class="^Spotify Premium$"] floating enable
+for_window [class="Spotify"] floating enable
 
 #Workspace Allocation
 workspace 1 output eDP1
@@ -195,21 +195,14 @@ bindsym --release Print exec --no-startup-id import ~/Pictures/screenshots/scree
 bindsym --release $super+Print exec --no-startup-id import -window root ~/Pictures/screenshots/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
 
 #Multiple Desktop
-bindsym Control+Shift+1 /home/firescar96/.i3/MonoBurner
-bindsym Control+Shift+2 /home/firescar96/.i3/DualBurner
+bindsym Control+Shift+1 exec ~/.i3/MonoBurner
+bindsym Control+Shift+2	exec ~/.i3/DualBurner
 bindsym Control+$mod+1 move container to output eDP1
 bindsym Control+$mod+2 move container to output HDMI1
 bindsym Control+$mod+left move container to output left
 bindsym Control+$mod+right move container to output right
 bindsym Control+$mod+up move container to output up
 bindsym Control+$mod+down move container to output down
-
-bindsym $super+$mod+1 move workspace to output eDP1 
-bindsym $super+$mod+2 move workspace to output HDMI1
-bindsym $super+$mod+left move workspace to output left
-bindsym $super+$mod+right move workspace to output right
-bindsym $super+$mod+up move workspace to output up
-bindsym $super+$mod+down move workspace to output down
 
 #Settings
 bindsym Control+$mod+s exec gnome-control-center

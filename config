@@ -16,7 +16,8 @@ set $super Mod4
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 9
+#font pango:DejaVu Sans Mono 9
+font pango: M+ 1m, FontAwesome, Ionicons, 10
 # Before i3 v4.8, we used to recommend this one as the default:
 # font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 # The font above is very space-efficient, that is, it looks good, sharp and
@@ -175,6 +176,16 @@ bindsym $super+F6 exec xbacklight -steps 1 -time 0 -inc 5
 bindsym XF86Battery exec gnome-power-statistics
 
 #Natural Audio Controls
+#bindsym XF86AudioLowerVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
+#bindsym XF86AudioRaiseVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
+#bindsym XF86AudioMute exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
+#bindsym $super+F11 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
+#bindsym $super+F12 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
+#bindsym $super+F10 exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
+#bindsym Control+F11 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
+#bindsym Control+F12 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
+#bindsym Control+F10 exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
+
 bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
 bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
 bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle

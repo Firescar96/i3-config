@@ -1,0 +1,3 @@
+killall i3bar
+bar_id=$(/usr/bin/i3-msg -t get_bar_config)
+echo $(/usr/bin/i3bar --bar_id=bar-0 &) >> /home/firescar96/.i3/test

@@ -1,3 +1,0 @@
-#i3-msg "workspace 1; append_layout ~/.i3/layout-1.json; exec google-chrome; exec xfce4-terminal"
-#i3-msg "workspace 2; append_layout ~/.i3/layout-2.json; exec spotify; exec google-chrome"
-#i3-msg "workspace 3; append_layout ~/.i3/layout-3.json; exec idle; exec xfce4-terminal"

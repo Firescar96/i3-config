@@ -97,8 +97,13 @@ bindsym $mod+Shift+minus move scratchpad
 # Show the first scratchpad window
 bindsym $mod+minus scratchpad show
 
+#Fluff Pruning
+for_window [class="^.*"] border pixel 1
+new_window 1pixel
+
 #Application Specific
 for_window [class="Spotify"] floating enable
+for_window [instance="urxvt"] floating enable
 
 #Workspace Allocation
 workspace 1 output eDP1
@@ -197,8 +202,8 @@ bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym $super+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
 bindsym $super+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
 bindsym $super+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym Control+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
-bindsym Control+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
+bindsym Control+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'
+bindsym Control+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
 bindsym Control+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 #Screensaver
@@ -212,7 +217,7 @@ bindsym --release $super+Print exec --no-startup-id import -window root ~/Pictur
 
 #Multiple Desktop
 bindsym Control+Shift+1 exec ~/.i3/MonoBurner
-bindsym Control+Shift+2	exec ~/.i3/DualBurner
+bindsym Control+Shift+2	exec ~/.i3/DualBurners
 bindsym Control+$mod+1 move container to output eDP1
 bindsym Control+$mod+2 move container to output HDMI1
 bindsym Control+$mod+left move container to output left
@@ -222,6 +227,9 @@ bindsym Control+$mod+down move container to output down
 
 #Settings
 bindsym Control+$mod+s exec gnome-control-center
+
+#Floating Terminal
+bindsym $super+a exec /home/firescar96/.i3/twilyterm
 
 #i3 Graphics Config
 hide_edge_borders both

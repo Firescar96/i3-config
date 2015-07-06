@@ -248,7 +248,7 @@ bar {
 }
 
 #Base Applicaions
-exec --no-startup-id ~/.i3/DeadBurner
+exec --no-startup-id /home/firescar96/.i3/DeadBurner
+exec --no-startup-id compton --config /home/firescar96/.i3/compton.conf 
 
 exec_always --no-startup-id nitrogen --restore
-exec_always --no-startup-id /home/firescar96/i3/battery-indicator

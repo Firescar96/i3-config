@@ -18,7 +18,7 @@ pactl
 xfce4-terminal
 pm-utils
 libnotify-bin
-libxcb-keysym1-dev
+libxcb-keysyms1-dev
 urxvt
 slop
 

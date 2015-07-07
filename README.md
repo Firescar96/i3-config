@@ -18,9 +18,25 @@ pactl
 xfce4-terminal
 pm-utils
 libnotify-bin
-libxcb-keysyms1-dev
 urxvt
 slop
+
+####i3-gaps
+
+See the DEPENDS file in the i3-gaps directory for details
+
+libxcb-keysyms1-dev
+libxcb-util0-dev
+libxcb-icccm4-dev
+libxcb-xkb-dev
+libxkbcommon-dev
+libxcb-xinerama0-dev
+libxcb-cursor-dev
+libyajl-dev
+libpago1.0-dev
+
+http://freedesktop.org/wiki/Software/startup-notification
+
 
 Highlights
 ==========

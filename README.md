@@ -5,29 +5,22 @@ My system config (minus some system edits) for Debian/i3 on an ASUS-Q55L0F.
 
 Requires (in no particular order)
 ========
+
 gnome
-
 i3
-
 j4tools
-
 nitrogen
-
 xbacklight
-
 xscreensaver
-
 gnome-screensaver
-
 i3lock
-
 pactl
-
 xfce4-terminal
-
 pm-utils
-
 libnotify-bin
+libxcb-keysym1-dev
+urxvt
+slop
 
 Highlights
 ==========

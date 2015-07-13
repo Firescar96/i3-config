@@ -5,29 +5,28 @@ My system config (minus some system edits) for Debian/i3 on an ASUS-Q55L0F.
 
 Requires (in no particular order)
 ========
+
 gnome
-
 i3
-
 j4tools
-
 nitrogen
-
 xbacklight
-
 xscreensaver
-
 gnome-screensaver
-
 i3lock
-
 pactl
-
 xfce4-terminal
-
 pm-utils
-
 libnotify-bin
+urxvt
+slop
+
+####i3-gaps
+See the DEPENDS file in the i3-gaps directory for updates and details
+
+http://freedesktop.org/wiki/Software/startup-notification
+
+libxcb-keysyms1-dev libpango1.0-dev libxcb-util0-dev xcb libxcb1-dev libxcb-icccm4-dev libyajl-dev libev-dev libxcb-xkb-dev libxcb-cursor-dev libxkbcommon-dev libxcb-xinerama0-dev libxkbcommon-x11-dev
 
 Highlights
 ==========

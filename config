@@ -242,13 +242,15 @@ client.urgent           #a5a5a5 #a5a5a5 #000000  #FF0000
 # finds out, if available)
 bar {
   status_command i3blocks
-	tray_output none
-	workspace_buttons no
+  tray_output primary
+  workspace_buttons no
+  position top
 }
 
 #Base Applicaions
 exec --no-startup-id /home/firescar96/.i3/DeadBurner
-exec_always --no-startup-id compton --config /home/firescar96/.i3/compton.conf 
+exec --no-startup-id /home/firescar96/.i3/youtubed/youtubed --download-dir=~/Videos/youtubed --media-cmd=""
+exec --no-startup-id compton --config /home/firescar96/.i3/compton.conf 
 
 exec_always --no-startup-id nitrogen --restore
 

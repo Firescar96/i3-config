@@ -1,0 +1,431 @@
+#!/bin/bash
+# Copyright (C) 2015 James Murphy
+# Licensed under the terms of the GNU GPL v2 only.
+#
+# Daemon for downloading and playing the youtube URL
+# in your clipboard. (Should work with any youtube-dl compatible URL.)
+#
+# Depends: youtube-dl, inotify-tools, xclip
+# Recommends: mpv | vlc, i3, i3blocks, python3
+# Suggests: tor, torsocks
+#
+# ./youtubed --download-dir=/data/videos/youtube
+#
+# Your ~/.config/i3blocks/config:
+# [youtubed_controller]
+# command=$SCRIPT_DIR/youtubed_controller DAEMON_DIR
+# interval=once
+# signal=1
+
+# User configurables
+DOWNLOAD_DIR="$XDG_DATA_DIR/youtubed"
+DAEMON_DIR="$XDG_RUNTIME_DIR/youtubed"
+DOWNLOAD_SIGNAL="SIGUSR1"
+CANCEL_SIGNAL="SIGUSR2"
+FIFO="youtubed.fifo"
+FORMAT_STR="%(title)s.%(id)s.%(resolution)s.%(ext)s"
+ID_ONLY_FMT="%(id)s"
+MERGE_OUTPUT_FORMAT="mkv"
+EXEC_AFTER_WRITE="pkill -RTMIN+1 i3blocks"
+MEDIA_CMD="i3-msg exec mpv"
+DOMAIN_WHITELIST=""
+QUALITY_STR="bestvideo+bestaudio"
+
+function setup_options {
+    HELP_TEXT="Usage: youtubed options\n\n"
+
+    function append_option {
+        local SHORT=$1
+        local LONG=$2
+        local HELP=$3
+        HELP=$(sed "s/%/%%/g" <<<$HELP)
+        local HELP_LINE=""
+        SHORTOPTS="$SHORTOPTS$SHORT"
+        if [ -n "$LONGOPTS" ]; then
+            LONGOPTS="$LONGOPTS,"
+        fi
+        LONGOPTS="$LONGOPTS$LONG"
+        if [ -n "$SHORT" ]; then
+            HELP_LINE="-$SHORT "
+        fi
+        if [ -n "$LONG" ]; then
+            i=$((${#LONG}-1))
+            if [ ${LONG:$i:1} == ":" ]; then
+                LONG="${2%?}"
+            fi 
+            LONG="--$LONG"
+            HELP_LINE="$HELP_LINE$LONG "
+        fi
+        HELP_LINE="$HELP_LINE$HELP"
+        HELP_TEXT="$HELP_TEXT$HELP_LINE\n"
+    }
+
+    append_option h help "\t\tPrint this help message.\n"
+    append_option "" "download-signal:" "\tThe signal that will trigger a "\
+"download.\n\t\t\tDefault: $DOWNLOAD_SIGNAL\n"
+    append_option "" "cancel-signal:" "\tThe signal that will cancel a "\
+"download.\n\t\t\tDefault: $CANCEL_SIGNAL\n"
+    append_option "" "download-dir:" "\t\tThe directory to save downloads in."\
+"\n\t\t\tDefault: \$XDG_DATA_DIR/youtubed\n" 
+    append_option "" "exec-after-write:" "\tA command to execute after "\
+"youtube-dl writes a status\n\t\t\tline.\n\t\t\tDefault: $EXEC_AFTER_WRITE\n"
+    append_option "" "daemon-dir:" "\t\tThe directory that youtubed keeps its "\
+"state files (.pid\n\t\t\tfiles, progress files, youtubed-fifo, status text"\
+"\n\t\t\tfiles).\n\t\t\tDefault: \$XDG_RUNTIME_DIR/youtubed\n"
+    append_option "" "format-str:" "\t\tThe format string to supply to "\
+"youtube-dl.\n\t\t\tDefault: $FORMAT_STR\n"
+    append_option "" "default-quality:" "\tSet the default quality of videos "\
+"to download.\n\t\t\tDefault: $QUALITY_STR\n"
+    append_option "" "media-cmd:" "\t\tUse \"media-cmd file\" to open a file "\
+"after download.\n\t\t\tDefault: $MEDIA_CMD\n"
+    append_option "" "domain-whitelist:" "\tReject url unless its domain is in "\
+"the given file.\n\t\t\tDefault: $DOMAIN_WHITELIST\n"
+    append_option "" "run-in-foreground" "\tTells youtubed to stay in the "\
+"foreground."
+}
+setup_options
+
+function usage {
+    printf "$HELP_TEXT";
+}
+
+function error_and_exit {
+    echo "[youtubed error] $1" >&2
+    echo "[youtubed] exiting" >&2 
+    exit 1
+}
+
+function error {
+    echo "[youtubed error] $1" >&2
+}
+
+function info {
+    echo "[youtubed] $1"
+}
+
+function pango_escape { 
+    local escaped="$1"                                                          
+    escaped=${escaped//</&lt;}                                                  
+    escaped=${escaped//>/&gt;}                                                     
+    escaped=${escaped//&/&amp;}                                                    
+    echo "$escaped"                                                                
+}  
+
+function pango {
+echo "<span color='$1'>$(pango_escape "$2")</span>"
+}
+
+function read_user_options {
+    OPTS=`getopt -o $SHORTOPTS -l $LONGOPTS -- "$@"`
+    if [ $? != 0 ]; then
+        usage
+        exit 1
+    fi
+
+    eval set -- "$OPTS"
+
+    while true; do
+        case "$1" in
+            --download-signal) DOWNLOAD_SIGNAL="$2"; shift 2 ;;
+            --cancel-signal) CANCEL_SIGNAL="$2"; shift 2 ;;
+            --download-dir) DOWNLOAD_DIR="$2"; shift 2 ;;
+            --exec-after-write) EXEC_AFTER_WRITE="$2"; shift 2 ;;
+            --daemon-dir) DAEMON_DIR="$2"; shift 2 ;;
+            --format-str) FORMAT_STR="$2"; shift 2 ;;
+            --default-quality) QUALITY_STR="$2"; shift 2 ;;
+            --media-cmd) MEDIA_CMD="$2"; shift 2 ;;
+            --domain-whitelist) DOMAIN_WHITELIST="$2"; shift 2 ;;
+            --run-in-foreground) RUN_IN_FOREGROUND=1; shift ;;
+            -h|--help) usage; exit 0; ;;
+            --) shift; break;;
+        esac
+    done
+}
+read_user_options "$@"
+
+function setup_sane_running_conditions {
+    test -z "$DOWNLOAD_DIR" && error_and_exit \
+        "Empty download-dir. Specify with the --download-dir option."
+    mkdir -p "$DOWNLOAD_DIR" || error_and_exit \
+        "Failed to create download-dir: $DOWNLOAD_DIR. "\
+"Try a different one with the --download-dir option."
+
+    test -z "$DAEMON_DIR" && error_and_exit \
+        "Empty daemon-dir. Specify with the --daemon-dir option."
+    mkdir -p "$DAEMON_DIR" || error_and_exit \
+        "Failed to create daemon-dir: $DAEMON_DIR. "\
+"Try a different one with the --daemon-dir option."
+
+    test -f "$DAEMON_DIR"/"youtubed.dpid" && error_and_exit \
+"Found youtubed.dpid. Is youtubed already running? "\
+"Expert users may run multiple youtubed by specifying a unique "\
+"--daemon-dir (and --download-dir, unless you are sure you won't be "\
+"attempting to download the same video in more than one daemon."
+
+    if [ -n "$DOMAIN_WHITELIST" ]; then
+        command -v python3 &>/dev/null || error_and_exit \
+"Dependency not found: python3"
+        test -f "$DOMAIN_WHITELIST" || error_and_exit \
+"Domain whitelist file $DOMAIN_WHITELIST not found."
+    fi
+
+    command -v youtube-dl &>/dev/null || error_and_exit \
+        "Dependency not found: youtube-dl (typically in package youtube-dl)."
+
+    command -v xclip &>/dev/null || error_and_exit \
+        "Dependency not found: xclip (typically in package xclip)."
+
+    command -v inotifywait &>/dev/null || error_and_exit \
+        "Dependency not found: inotifywait (typically in package "\
+"inotify-tools)."
+
+    mkfifo -m=600 "$DAEMON_DIR"/"$FIFO" || error_and_exit \
+        "Failed to make fifo: ""$DAEMON_DIR"/"$FIFO."
+}
+setup_sane_running_conditions
+
+function write_immediate {
+    local OUT="$1"
+    local FULL_TEXT="$2"
+    local SHORT_TEXT=${3:-$2}
+    echo "$FULL_TEXT" >"$OUT"
+    echo "$SHORT_TEXT" >>"$OUT"
+    $EXEC_AFTER_WRITE
+}
+
+function write_immediate_temp {
+    local TMP_I3TEXT=$(mktemp -p "$DAEMON_DIR" "tmp.XXXXXXXX.i3text")
+    write_immediate "$TMP_I3TEXT" "$1"
+    
+    # auto remove after $2 seconds or echo name of temp for manual deletion 
+    if [ -n "$2" ]; then
+        sleep "$2" && rm "$TMP_I3TEXT" && $EXEC_AFTER_WRITE &
+    else
+        echo "$TMP_I3TEXT"
+    fi
+}
+
+function valid_URL {
+    local URL=$1
+    if [ -n "$DOMAIN_WHITELIST" ]; then
+        python3 validate-url.py "$URL" "$DOMAIN_WHITELIST"
+        return $?
+    fi
+    return 0
+}
+
+
+function download {
+    local URL=${1:-$(xclip -out 2>/dev/null | tr -cd "[:print:]")}
+    info "Set URL: $URL"
+    if ! valid_URL "$URL"; then
+        info "$URL: bad URL"
+        write_immediate_temp "$(pango red "Bad URL: $URL")" "2"
+        return
+    fi
+    local TMP_I3TEXT=$(write_immediate_temp \
+        "$(pango yellow "$URL: getting filename")")
+    local FILENAME=${2:-$(youtube-dl --get-filename --restrict-filenames \
+        -f "$QUALITY_STR" -o "$ID_ONLY_FMT" \
+        --merge-output-format "$MERGE_FORMAT_STR" "$URL")}
+    local YT_EXIT=$?
+    info "Set FILENAME: $FILENAME"
+    
+    rm "$TMP_I3TEXT" 2> /dev/null
+    $EXEC_AFTER_WRITE
+    
+    # Don't do anything if the name lookup failed
+    if [ "$YT_EXIT" -ne 0 ] || [ -z "$FILENAME" ]; then
+        error "Couldn't download: $URL"
+        write_immediate_temp "$(pango red "Couldn't download: $URL")" "2"
+        return
+    fi
+
+    if [ -f "$DAEMON_DIR"/"$FILENAME".pid ]; then
+        info "Found ""$DAEMON_DIR"/"$FILENAME"".pid, "\
+            "attempting to cancel it first."
+        cancel "$URL" "$FILENAME"
+    fi
+
+    youtube-dl --newline --restrict-filenames -f "$QUALITY_STR" \
+        -o "$DOWNLOAD_DIR"/"$FILENAME" \
+        --merge-output-format="$MERGE_OUTPUT_FORMAT" \
+        "$URL" > \
+        "$DAEMON_DIR"/"$FILENAME".progress &
+    local PID=$!
+    info "Spawned youtube-dl with PID: $PID"
+    echo $PID > "$DAEMON_DIR"/"$FILENAME".pid
+    
+    function spawn_notifier {
+        local PROGRESS=""
+        local FILENAME="$1"
+        local PID="$2"
+        while [ -n "$(ps --no-headers -p $PID)" ]; do
+            inotifywait -q -q -t 1 -e modify "$DAEMON_DIR"/"$FILENAME".progress
+            PROGRESS=$(tail -n1 "$DAEMON_DIR"/"$FILENAME".progress 2> /dev/null)
+            #TODO make prettier progress
+            if [ -n "$PROGRESS" ]; then
+                info "$FILENAME: $PROGRESS"
+                write_immediate "$DAEMON_DIR"/"$FILENAME".i3text \
+                    "$(pango yellow "$FILENAME: $PROGRESS")" \
+                    "$(pango yellow "$FILENAME: $PROGRESS")"
+            fi
+        done
+        
+        local MERGE_REQUIRED=1
+        local MERGE_NAME="$FILENAME"
+        if [ ! -f "$DOWNLOAD_DIR"/"$FILENAME" ] && \
+            [ -f "$DOWNLOAD_DIR"/"$FILENAME.$MERGE_OUTPUT_FORMAT" ]; then
+            info "$FILENAME: $MERGE_OUTPUT_FORMAT merge was required"
+            MERGE_NAME="$FILENAME.$MERGE_OUTPUT_FORMAT"
+            MERGE_REQUIRED=0
+        fi
+
+        # If download was successful, rename and watch your video
+        if [ -f "$DOWNLOAD_DIR"/"$MERGE_NAME" ]; then
+            info "$MERGE_NAME: Download appears to be successful"
+            info "$MERGE_NAME: getting FULL_FILENAME"
+            write_immediate "$DAEMON_DIR"/"$FILENAME".i3text \
+                "$(pango yellow "$FILENAME: Getting full filename")" 
+            # youtube-dl (or rather ffmpeg) will fail at the merge step if 
+            # filename is too long, hence the need for FULL_FILENAME
+            FULL_FILENAME=$(youtube-dl --get-filename --restrict-filenames \
+                -f "$QUALITY_STR" -o "$FORMAT_STR" "$URL")
+            if [ $MERGE_REQUIRED -eq "0" ]; then
+                FULL_FILENAME="$FULL_FILENAME.$MERGE_OUTPUT_FORMAT"
+            fi
+            mv "$DOWNLOAD_DIR"/{"$MERGE_NAME","$FULL_FILENAME"}
+            write_immediate_temp "$(pango "#00FF00" "$FULL_FILENAME: done")" "2"
+            if [ -n "$MEDIA_CMD" ]; then
+                info "Notifier for FILENAME=$FILENAME, PID=$PID: "\
+"Found media command, executing"
+                bash -c "$MEDIA_CMD ""$DOWNLOAD_DIR"/"$FULL_FILENAME"
+            fi
+        else
+            info "$FILENAME: Download appears to be unsuccessful,"\
+"possibly because another thread cancelled it."
+        fi
+
+        info "Notifier for FILENAME=$FILENAME, PID=$PID: done notifying"
+        
+        rm "$DAEMON_DIR"/"$FILENAME".{pid,progress,i3text} 2> /dev/null
+        $EXEC_AFTER_WRITE
+    }   
+    spawn_notifier "$FILENAME" "$PID" &
+    info "Spawned notifier for FILENAME=$FILENAME, PID=$PID, notifier PID=$!"
+}
+
+function cancel {
+    local URL=${1:-$(xclip -out 2>/dev/null | tr -cd "[:print:]")}
+    info "Set URL: $URL"
+    if ! valid_URL "$URL"; then
+        info "$URL: bad URL"
+        write_immediate_temp "$(pango red "Bad URL: $URL")" "2"
+        return
+    fi
+    local TMP_I3TEXT=$(write_immediate_temp "$(pango red "$URL: Canceling")")
+    local FILENAME=${2:-$(youtube-dl --get-filename --restrict-filenames \
+        -f "$QUALITY_STR" -o "$ID_ONLY_FMT" "$URL")}
+    local YT_EXIT=$?
+    info "Set FILENAME: $FILENAME"
+    
+    rm "$TMP_I3TEXT" 2> /dev/null
+    $EXEC_AFTER_WRITE
+
+    # Don't do anything if the name lookup failed
+    if [ "$YT_EXIT" -ne 0 ] || [ -z "$FILENAME" ]; then
+        error "Couldn't cancel: $URL"
+        write_immediate_temp "$(pango red "Couldn't cancel: $URL")" "2"
+        return
+    fi
+
+    if [ -f "$DAEMON_DIR"/"$FILENAME".pid ]; then
+        kill $(cat "$DAEMON_DIR"/"$FILENAME".pid)
+    fi
+    
+    # trigger inotifywait of other thread so it will kill itself
+    echo " " > "$DAEMON_DIR"/"$FILENAME".progress
+    
+    # wait for other thread to kill itself
+    if [ -f "$DAEMON_DIR"/"$FILENAME".pid ]; then
+        inotifywait -q -q -t 5 -e delete_self "$DAEMON_DIR"/"$FILENAME".pid
+    fi
+
+    rm "$DAEMON_DIR"/"$FILENAME".{pid,progress,i3text} 2> /dev/null
+    info "$FILENAME: Cancel complete"
+}
+
+function quality {
+    QUALITY_STR="$1"
+    echo "$QUALITY_STR">"$DAEMON_DIR"/"quality"
+    write_immediate_temp "$(pango white "Quality set to $QUALITY_STR")" "2"
+    info "Quality set to $QUALITY_STR"
+}
+
+function toggle_quality {
+    case "$QUALITY_STR" in
+        bestvideo+bestaudio) quality "bestaudio";;
+        bestaudio) quality "worstvideo+worstaudio";;
+        worstvideo+worstaudio) quality "worstaudio";;
+        worstaudio) quality "bestvideo+bestaudio";;
+        *) quality "bestvideo+bestaudio";;
+    esac
+}
+
+function die {
+    shopt -s nullglob
+    for pidfile in "$DAEMON_DIR"/*.pid; do
+        kill $(cat $pidfile)
+    done
+    pkill -SIGTERM -P $BASHPID
+    rm "$DAEMON_DIR"/youtubed.dpid 2>/dev/null
+    rm "$DAEMON_DIR"/"$FIFO" 2>/dev/null
+    rm "$DAEMON_DIR"/"quality" 2>/dev/null
+    rm "$DAEMON_DIR"/*.i3text 2>/dev/null
+    rm "$DAEMON_DIR"/*.progress 2>/dev/null
+    rm "$DAEMON_DIR"/*.pid 2>/dev/null
+    $EXEC_AFTER_WRITE
+    exit 0
+}
+
+function command_loop {   
+    trap download "$DOWNLOAD_SIGNAL"
+    trap cancel "$CANCEL_SIGNAL"
+    trap die SIGTERM SIGINT
+
+    function dispatch_command {
+        info "Received command: $1"
+        local CMD=$(cut -d ' ' -f 1 <<< "$1")
+        local ARGS=$(cut -d ' ' -sf 2- <<< "$1")
+        case "$CMD" in
+            download) download "$ARGS" &;;
+            cancel) cancel "$ARGS" &;;
+            toggle_quality) toggle_quality;;
+            quality) quality "$ARGS";;
+            die) die;;
+        esac
+    }   
+
+    while true; do
+        read line <"$DAEMON_DIR"/"$FIFO" && dispatch_command $line &
+        wait $! 
+        if [ -f "$DAEMON_DIR"/"quality" ]; then
+            QUALITY_STR=$(cat "$DAEMON_DIR"/"quality")
+            rm "$DAEMON_DIR"/"quality"
+        fi
+    done
+}
+
+echo "$$" > "$DAEMON_DIR"/youtubed.dpid
+$EXEC_AFTER_WRITE
+if [ "$RUN_IN_FOREGROUND" == "1" ]; then
+    echo "$$" > "$DAEMON_DIR"/youtubed.dpid
+    $EXEC_AFTER_WRITE
+    command_loop
+else
+    command_loop &> /dev/null &
+    echo "$!" > "$DAEMON_DIR"/youtubed.dpid
+    disown
+    $EXEC_AFTER_WRITE
+fi
+

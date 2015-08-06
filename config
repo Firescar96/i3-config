@@ -102,7 +102,7 @@ new_window 1pixel
 
 #Application Specific
 for_window [class="Spotify"] floating enable
-for_window [instance="urxvt"] floating enable
+for_window [class="Gnome-terminal"] floating enable
 
 #Workspace Allocation
 workspace 1 output eDP1
@@ -250,7 +250,7 @@ bar {
 #Base Applicaions
 exec --no-startup-id /home/firescar96/.i3/DeadBurner
 exec --no-startup-id /home/firescar96/.i3/youtubed/youtubed --download-dir=~/Videos/youtubed --media-cmd=""
-exec --no-startup-id compton --config /home/firescar96/.i3/compton.conf 
+exec_always --no-startup-id compton --config /home/firescar96/.i3/compton.conf 
 
 exec_always --no-startup-id nitrogen --restore
 

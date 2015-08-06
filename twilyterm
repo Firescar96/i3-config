@@ -1,39 +1,35 @@
 #!/bin/bash
 #
-#   Author:         Twily                                           2015
+#   Author:         Twily, Edited by Firescar96                      2015
 #   Description:    Spawn a new terminal window inside a drawn rectangle
-#   Requires:       slop (or xrectsel: http://pastebin.com/eeLRBed6), urxvt
+#   Requires:       slop, uxterm
 #   Usage:          Bind hotkey to $ sh ./drawterm
 #
 #   Note:           if using compton w/ shadows, exclude "class_g = 'slop'"
+#                   Original of this file: http://pastebin.com/9sn8V0zZ
 #
 
-M=2                 # slop border width
+M=1                 # slop border width
+SCREENRES=$(xdpyinfo  | grep 'dimensions:' | awk '{print $2}')
+WIDTH=$(echo "$SCREENRES" | cut -d 'x' -f 1)
+HEIGHT=$(echo "$SCREENRES" | cut -d 'x' -f 2)
+COLS=211 #max width of terminal in columns #$(tput cols)
+LINES=59 #max height of terminal in lines $(tput lines)
 
 REC=$(slop -t 0 -b $M -c 1,1,1,1 -f "%w %h %x %y" --nokeyboard) || exit 1
-#REC=$(xrectsel) || exit 1
 
 IFS=' ' read -r W H X Y <<< "$REC"
 
-aX=$(( $X - $M )) && aY=$(( $Y - $M ))
-aW=$(( $W + ( $M * 2 ) )) && aH=$(( $H + ( $M * 2 ) ))
-
 if [ "$W" -gt "1" ]; then
     # Calculate width and height to block/font size
-    let W=$(( $W / 7 ))-2
-    let H=$(( $H / 15 ))-1
+    dW="$(echo "scale=10; $W / $WIDTH * $COLS" | bc)"
+    dH="$(echo "scale=10; $H / $HEIGHT * $LINES" | bc)"
+    nW=$(printf "%.0f" $dW)
+    nH=$(printf "%.0f" $dH)
 
-    urxvt -g $W"x"$H"+"$X"+"$Y &
-
-    for i in {0..49}; do # timeout
-        if ps -p $! >/dev/null; then
-            sleep .1
-
-            wmctrl -r :ACTIVE: -e 0,$aX,$aY,$aW,$aH
-            break
-        fi
-    done
+    gnome-terminal --geometry $nW"x"$nH"+"$X"+"$Y &
 fi
 
 exit 0
 
+)

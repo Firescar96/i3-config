@@ -1,0 +1,1 @@
+echo "<span background=\"#a55\" foreground=\"#fff\">"$(date '+%Y-%m-%d %H:%M:%S')"</span>"

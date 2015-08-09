@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo $(/sbin/iwconfig 2>&1 | grep -ow "Bit Rate=[0-9]*\s[a-zA-Z/]*" | grep -ow "[0-9].*")

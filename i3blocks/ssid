@@ -1,3 +1,0 @@
-#!/bin/bash
-
-echo $(/sbin/iw dev wlan0 link | grep SSID | cut -d " " -f 2-)

@@ -181,9 +181,6 @@ bindsym XF86MonBrightnessUp exec xbacklight -steps 1 -time 0 -inc 5
 bindsym $super+F5 exec xbacklight -steps 1 -time 0 -dec 5
 bindsym $super+F6 exec xbacklight -steps 1 -time 0 -inc 5
 
-# show battery stats
-bindsym XF86Battery exec gnome-power-statistics
-
 #Natural Audio Controls
 #bindsym XF86AudioLowerVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
 #bindsym XF86AudioRaiseVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
@@ -245,7 +242,7 @@ bar {
   tray_output primary
   workspace_buttons no
   position top
-  font pango:Prelude Bold, FontAwesome 9
+  font pango:Cairo, FontAwesome 10
 }
 
 #Base Applicaions

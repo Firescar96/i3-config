@@ -58,14 +58,14 @@ format() {
   perl_filter+='"; CORE::say $4 eq "off" ? "MUTE" : "'
   perl_filter+='"; exit}'
   base=$(perl -ne "$perl_filter")
-  
-  color="#00ffff"
-  icon=   
+
+  color="#00ff55"
+  icon=
   if [[ "$base" == *"MUTE"* ]];then
     icon=
     color="#ffcc00"
   fi
- 
+
   echo $icon ' ' $base | sed 's/ MUTE//'
   echo $icon ' ' $base | sed 's/ MUTE//'
   echo $color

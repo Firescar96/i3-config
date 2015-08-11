@@ -2,6 +2,7 @@
 #
 # Copyright 2014 Pierre Mavro <deimos@deimos.fr>
 # Copyright 2014 Vivien Didelot <vivien@didelot.org>
+# Copyright 2015 Nchinda Nchinda <nchinda2@gmail.com>
 #
 # Licensed under the terms of the GNU GPL v3, or any later version.
 #
@@ -21,9 +22,14 @@ my $status;
 my $percent;
 my $full_text;
 my $short_text;
+my $bat_number = $ENV{BLOCK_INSTANCE} || 0;
+
+my $red;
+my $green;
+my $blue;
 
 # read the first line of the "acpi" command output
-open (ACPI, 'acpi -b |') or die "Can't exec acpi: $!\n";
+open (ACPI, "acpi -b | grep 'Battery $bat_number' |") or die;
 $acpi = <ACPI>;
 close(ACPI);
 
@@ -54,16 +60,10 @@ print "$short_text\n";
 
 # consider color and urgent flag only on discharge
 if ($status eq 'Discharging') {
-
-	if ($percent < 20) {
-		print "#FF0000\n";
-	} elsif ($percent < 40) {
-		print "#FFAE00\n";
-	} elsif ($percent < 60) {
-		print "#FFF600\n";
-	} elsif ($percent < 85) {
-		print "#A8FF00\n";
-	}
+	$red=sprintf("%x", ((100-$percent) / 100 * 255));
+	$green=sprintf("%x", ($percent / 100 * 255));
+	$blue=sprintf("%x", ((50-abs(50-$percent)) / 50 * 255));
+	print "#"."$red$green$blue\n";
 
 	if ($percent < 5) {
 		exit(33);

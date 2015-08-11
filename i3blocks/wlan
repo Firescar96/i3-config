@@ -1,0 +1,22 @@
+#!/bin/bash
+
+INTERFACE="wlan0"
+
+state="$(cat /sys/class/net/$INTERFACE/operstate)"
+
+if [ "$state" != "up" ]
+then
+  echo ""
+  echo ""
+  echo "#ff0000"
+  exit 0
+fi
+
+ssid=$(/sbin/iw dev wlan0 link | grep SSID | cut -d " " -f 2-)
+speed=$(/sbin/iwconfig 2>&1 | grep -ow "Bit Rate=[0-9]*\s[a-zA-Z/]*" | grep -ow "[0-9].*")
+
+ipaddr="$(ip addr show $INTERFACE | perl -n -e'/inet (.+)\// && print $1')"
+ipaddr="${ipaddr:-0.0.0.0}"
+
+# full text
+echo -n "$ipaddr ($speed)  $ssid"

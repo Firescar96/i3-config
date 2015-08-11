@@ -1,5 +1,6 @@
 #!/bin/sh
 # Copyright (C) 2014 Julien Bonjean <julien@bonjean.info>
+# Copyright (C) 2014 Nchinda Nchinda <nchinda2@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,23 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-INTERFACE="${BLOCK_INSTANCE:-eth0}"
+INTERFACE="eth0"
 
 state="$(cat /sys/class/net/$INTERFACE/operstate)"
-ethstate="$(cat /sys/class/net/eth0/operstate)"
 
 if [ "$state" != "up" ]
 then
-  if [ "$INTERFACE" == "wlan0" && ethstate != "up" ]
-  then
-    echo "down"
-    echo "down"
-    echo "#ff0000"
-  else
-    echo ""
-    echo ""
-    echo "#ff0000"
-  fi
+  echo ""
+  echo ""
+  echo "#ff0000"
   exit 0
 fi
 
@@ -42,6 +35,3 @@ ipaddr="${ipaddr:-0.0.0.0}"
 # full text
 echo -n "$ipaddr"
 [ -n "$speed" ] && echo " ($speed Mbits/s)" || echo
-
-# short text
-echo "$ipaddr"

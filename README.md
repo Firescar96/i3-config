@@ -42,7 +42,11 @@ Highlights
 
 -Credit to twilly for the basis of a script to quickly open a floating terminal of any size
 
--simple compton config to add transparency
+-simple compton config to add transparency to floating terminal
+
+-blocks for current battery, Bitcoin price, media player, and more
+
+-battery color smooth gradient, green <-> purple <-> red
 
 Notes
 ====

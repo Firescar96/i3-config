@@ -48,6 +48,8 @@ Highlights
 
 -battery color smooth gradient, green <-> purple <-> red
 
+-dmenu includes custom aliases in the search bar
+
 Notes
 ====
 -many of these commands require root access, add a line like this to your sudoers file:

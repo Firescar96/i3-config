@@ -34,6 +34,11 @@ def num2clock(num):
 result = ""
 now = datetime.datetime.now()
 t = [now.hour, now.minute, now.second]
-for i in t:
-    result += chr(num2clock(i))
+parts = list(map(lambda x: chr(num2clock(x)),t))
+parts[0]="<span background=\"#000\" foreground=\"#f00\"><b>"+parts[0]+"</b></span>"
+parts[1]="<span background=\"#000\" foreground=\"#0f0\"><b>"+parts[1]+"</b></span>"
+parts[2]="<span background=\"#000\" foreground=\"#0ff\"><b>"+parts[2]+"</b></span>"
+
+for i in parts:
+    result += i
 print(result)

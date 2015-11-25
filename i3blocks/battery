@@ -27,6 +27,7 @@ my $bat_number = $ENV{BLOCK_INSTANCE} || 0;
 my $red;
 my $green;
 my $blue;
+my $bbase;
 
 # read the first line of the "acpi" command output
 open (ACPI, "acpi -b | grep 'Battery $bat_number' |") or die;
@@ -44,15 +45,15 @@ $full_text = "$percent%";
 
 if ($status eq 'Discharging') {
 	$full_text .= ' DIS';
-} elsif ($status eq 'Charging') {
-	$full_text .= ' CHR';
-}
+  } elsif ($status eq 'Charging') {
+   $full_text .= ' CHR';
+ }
 
-$short_text = $full_text;
+ $short_text = $full_text;
 
-if ($acpi =~ /(\d\d:\d\d):/) {
-	$full_text .= " ($1)";
-}
+ if ($acpi =~ /(\d\d:\d\d):/) {
+   $full_text .= " ($1)";
+ }
 
 # print text
 print "$full_text\n";
@@ -60,14 +61,15 @@ print "$short_text\n";
 
 # consider color and urgent flag only on discharge
 if ($status eq 'Discharging') {
-	$red=sprintf("%x", ((100-$percent) / 100 * 255));
-	$green=sprintf("%x", ($percent / 100 * 255));
-	$blue=sprintf("%x", ((50-abs(50-$percent)) / 50 * 255));
-	print "#"."$red$green$blue\n";
+	$red=sprintf("%02x", ((100-$percent+($percent)*.3) / 100 * 255));
+	$green=sprintf("%02x", (($percent+(100-$percent)*.3) / 100 * 255));
+	$bbase=50-abs(50-$percent);
+      $blue=sprintf("%02x", ($bbase+(50-$bbase)*.2) / 50 * 255);
+      print "#"."$red$green$blue\n";
 
-	if ($percent < 5) {
-		exit(33);
-	}
+  if ($percent < 3) {
+    exit(33);
+  }
 }
 
 exit(0);

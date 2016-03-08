@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+
+'''
+binclock
+
+binclock outputs the current time in binary clock format using unicode braille
+characters.
+
+Created Aug 2015 by cbarox
+Edited by firescar96
+'''
+
+import datetime
+
+_BRAILLE_ZERO = 0x2800
+
+# maps bit to the value for braille
+_BRAILLE_MAP1 = [0x40, 0x04, 0x02, 0x01]
+_BRAILLE_MAP2 = [0x80, 0x20, 0x10, 0x08]
+
+# converts a 2 digit number to binary clock form
+def num2clock(num):
+    d1 = int(num / 10)
+    d2 = int(num % 10)
+    brl = _BRAILLE_ZERO
+    for i in range(4):
+        if (d1 & (2**i)):
+            brl |= _BRAILLE_MAP1[i]
+    for i in range(4):
+        if (d2 & (2**i)):
+            brl |= _BRAILLE_MAP2[i]
+    return brl
+
+result = ""
+now = datetime.datetime.now()
+<<<<<<< HEAD
+t = [now.hour, now.minute, now.second]
+parts = list(map(lambda x: chr(num2clock(x)),t))
+parts[0]="<span background=\"#000\" foreground=\"#f00\"><b>"+parts[0]+"</b></span>"
+parts[1]="<span background=\"#000\" foreground=\"#0f0\"><b>"+parts[1]+"</b></span>"
+parts[2]="<span background=\"#000\" foreground=\"#0ff\"><b>"+parts[2]+"</b></span>"
+
+for i in parts:
+    result += i
+print(result)
+=======
+t = [chr(num2clock(now.hour)), chr(num2clock(now.minute)), chr(num2clock(now.second))]
+result = t[0]+" "+t[1]+" "+t[2]
+print(result)
+>>>>>>> temp

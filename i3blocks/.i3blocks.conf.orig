@@ -124,6 +124,11 @@ interval=1
 markup=pango
 
 [time]
+<<<<<<< HEAD
+command=~/.i3/i3blocks/binclock
+interval=1
+markup=pango
+=======
 command=~/.i3/i3blocks/time
 interval=1
 markup=pango
@@ -131,3 +136,4 @@ markup=pango
 [wallpaper]
 command=~/.i3/i3blocks/wallpaper
 interval=60
+>>>>>>> temp

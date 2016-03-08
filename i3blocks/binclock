@@ -7,7 +7,7 @@ binclock outputs the current time in binary clock format using unicode braille
 characters.
 
 Created Aug 2015 by cbarox
-
+Edited by firescar96
 '''
 
 import datetime
@@ -33,7 +33,6 @@ def num2clock(num):
 
 result = ""
 now = datetime.datetime.now()
-t = [now.hour, now.minute, now.second]
-for i in t:
-    result += chr(num2clock(i))
+t = [chr(num2clock(now.hour)), chr(num2clock(now.minute)), chr(num2clock(now.second))]
+result = t[0]+" "+t[1]+" "+t[2]
 print(result)

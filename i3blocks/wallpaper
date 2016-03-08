@@ -1,0 +1,28 @@
+#! /bin/bash
+WALLPAPERSDIR="/home/firescar96/Pictures/wallpaper/"
+xrandr | grep "HDMI1 connected" >> /dev/null
+if [ "$?" -eq 0 ]
+then
+  WALLPAPERS=$WALLPAPERSDIR"dual"
+else
+  WALLPAPERS=$WALLPAPERSDIR"mono"
+fi
+ALIST=( `ls -w1 $WALLPAPERS` )
+#echo $ALIST
+RANGE=${#ALIST[@]}
+let "number = $RANDOM"
+let LASTNUM="`cat $WALLPAPERS/.last` + $number"
+let "number = $LASTNUM % $RANGE"
+echo $number > $WALLPAPERS/.last
+file_ext=$(echo $WALLPAPERS/${ALIST[$number]} |awk -F . '{if (NF>1) {print $NF}}')
+
+#kILL MPLAYER IF IT WAS RUNNING BEFORE
+if [ "$file_ext" == "mp4" ]
+then
+  nitrogen --set-centered $WALLPAPERSDIR/blackbg.png --set-color=#000000
+  killer="ps aux | grep 'title wallpaper' | awk '{print \$2;}' | xargs kill"
+  echo $killer | at now + 1 minute
+  mplayer -ao null -rootwin -title wallpaper $WALLPAPERS/${ALIST[$number]} -loop 1000 > /dev/null
+else
+  nitrogen --set-centered --save $WALLPAPERS/${ALIST[$number]}
+fi

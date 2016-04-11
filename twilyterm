@@ -13,8 +13,8 @@ M=1                 # slop border width
 SCREENRES=$(xdpyinfo  | grep 'dimensions:' | awk '{print $2}')
 WIDTH=$(echo "$SCREENRES" | cut -d 'x' -f 1)
 HEIGHT=$(echo "$SCREENRES" | cut -d 'x' -f 2)
-COLS=191 #max width of terminal in columns #$(tput cols)
-LINES=56 #max height of terminal in lines $(tput lines)
+COLS=211 #max width of terminal in columns #$(tput cols)
+LINES=59 #max height of terminal in lines $(tput lines)
 
 REC=$(slop -t 0 -b $M -c 1,1,1,1 -f "%w %h %x %y" --nokeyboard) || exit 1
 
@@ -32,7 +32,7 @@ if [ "$W" -gt "1" ]; then
     echo "$nW"
     echo "$nH"
 
-    gnome-terminal --geometry $nW"x"$nH #"+"$X"+"$Y &
+    gnome-terminal --geometry=$nW"x"$nH "+"$X"+"$Y &
 fi
 
 exit 0

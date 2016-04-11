@@ -7,6 +7,7 @@ then
 else
   WALLPAPERS=$WALLPAPERSDIR"mono"
 fi
+#WALLPAPERS=$WALLPAPERSDIR"mono"
 ALIST=( `ls -w1 $WALLPAPERS` )
 #echo $ALIST
 RANGE=${#ALIST[@]}
@@ -17,12 +18,13 @@ echo $number > $WALLPAPERS/.last
 file_ext=$(echo $WALLPAPERS/${ALIST[$number]} |awk -F . '{if (NF>1) {print $NF}}')
 
 #kILL MPLAYER IF IT WAS RUNNING BEFORE
-if [ "$file_ext" == "mp4" ]
+if [ "$file_ext" == "avi" ] || [ "$file_ext" == "webm" ]
 then
   nitrogen --set-centered $WALLPAPERSDIR/blackbg.png --set-color=#000000
   killer="ps aux | grep 'title wallpaper' | awk '{print \$2;}' | xargs kill"
-  echo $killer | at now + 1 minute
+  echo $killer | at now + 2 minute
   mplayer -ao null -rootwin -title wallpaper $WALLPAPERS/${ALIST[$number]} -loop 1000 > /dev/null
+  nitrogen --restore
 else
   nitrogen --set-centered --save $WALLPAPERS/${ALIST[$number]}
 fi

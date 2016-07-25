@@ -9,14 +9,15 @@ Requires (in no particular order)
 gnome-control-center
 nitrogen
 xbacklight
+i3-gaps
 i3lock
 playerctl
 xfce4-terminal
 gnome-terminal
+msi-keyboard
 pm-utils
 libnotify-bin
-
-ruby-slop
+[slop](https://github.com/naelstrof/slop)
 
 #### playerctl
 gobject-introspection

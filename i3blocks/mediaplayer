@@ -58,7 +58,7 @@ sub buttons {
         if ($ENV{'BLOCK_BUTTON'} == 1) {
             system("playerctl $player_arg previous");
             usleep(DELAY * 1000) if $BLOCK_INSTANCE eq SPOTIFY_STR;
-        } elsif ($ENV{'BLOCK_BUTTON'} == 2) {
+        } elsif ($ENV{'BLOCK_BUTTON'} == 2 || $ENV{'BLOCK_BUTTON'} == 4 || $ENV{'BLOCK_BUTTON'} == 5) {
             system("playerctl $player_arg play-pause");
         } elsif ($ENV{'BLOCK_BUTTON'} == 3) {
             system("playerctl $player_arg next");
@@ -115,7 +115,8 @@ sub playerctl {
     push(@metadata, $title) if $title;
 
     print(join(" - ", @metadata)) if @metadata;
-    print "Spotify Control Panel";
+    print "\n\n";
+    print "#ff0000";
 }
 
 if ($player_arg eq '' or $player_arg =~ /mpd/) {

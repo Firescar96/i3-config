@@ -4,13 +4,12 @@ SLEEP_TIME=5   # Default time between checks.
 SAFE_PERCENT=30  # Still safe at this level.
 DANGER_PERCENT=15  # Warn when battery at this level.
 CRITICAL_PERCENT=7  # Final Notice when battery at this level.
-HIBERNATE_PERCENT=5 #Hibernate at this level
+HIBERNATE_PERCENT=3 #Hibernate at this level
 
 export DISPLAY=:0.0
  
 while [ true ]; do
     if [[ -n $(acpi -b | grep -i discharging) ]]; then
-        pm-powersave true
         rem_bat=$(acpi -b | grep -Eo "[0-9]+%" | grep -Eo "[0-9]+")
  
         if [[ $rem_bat -gt $SAFE_PERCENT ]]; then
@@ -27,11 +26,10 @@ while [ true ]; do
             fi
 	    if [[ $rem_bat -le $HIBERNATE_PERCENT ]]; then
                 SLEEP_TIME=2
-                pm-hibernate
+                sudo hibernate
             fi
         fi
     else
-        pm-powersave false
         SLEEP_TIME=10
     fi
  

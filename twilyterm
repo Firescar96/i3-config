@@ -32,7 +32,7 @@ if [ "$W" -gt "1" ]; then
     echo "$nW"
     echo "$nH"
 
-    gnome-terminal --geometry=$nW"x"$nH "+"$X"+"$Y &
+    gnome-terminal --geometry="${nW}x${nH}+${X}+${Y}" &
 fi
 
 exit 0

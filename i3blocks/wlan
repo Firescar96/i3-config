@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INTERFACE="wlan0"
+INTERFACE="wlp2s0"
 
 state="$(cat /sys/class/net/$INTERFACE/operstate)"
 
@@ -19,4 +19,8 @@ ipaddr="$(ip addr show $INTERFACE | perl -n -e'/inet (.+)\// && print $1')"
 ipaddr="${ipaddr:-0.0.0.0}"
 
 # full text
-echo -n "$ipaddr ($speed)  $ssid"
+echo "$ipaddr ($speed)  $ssid"
+#short text
+echo ""
+#color
+echo "#00FF00"

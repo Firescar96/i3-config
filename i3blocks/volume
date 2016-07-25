@@ -59,7 +59,7 @@ format() {
   perl_filter+='"; exit}'
   base=$(perl -ne "$perl_filter")
 
-  color="#00ff55"
+  color="#33ffff"
   icon=
   if [[ "$base" == *"MUTE"* ]];then
     icon=

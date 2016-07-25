@@ -24,7 +24,7 @@ DOWNLOAD_SIGNAL="SIGUSR1"
 CANCEL_SIGNAL="SIGUSR2"
 FIFO="youtubed.fifo"
 FORMAT_STR="%(title)s.%(id)s.%(resolution)s.%(ext)s"
-ID_ONLY_FMT="%(id)s"
+ID_ONLY_FMT="%(title)s"
 MERGE_OUTPUT_FORMAT="mkv"
 EXEC_AFTER_WRITE="pkill -RTMIN+1 i3blocks"
 MEDIA_CMD="i3-msg exec mpv"
@@ -52,7 +52,7 @@ function setup_options {
             i=$((${#LONG}-1))
             if [ ${LONG:$i:1} == ":" ]; then
                 LONG="${2%?}"
-            fi 
+            fi
             LONG="--$LONG"
             HELP_LINE="$HELP_LINE$LONG "
         fi
@@ -66,7 +66,7 @@ function setup_options {
     append_option "" "cancel-signal:" "\tThe signal that will cancel a "\
 "download.\n\t\t\tDefault: $CANCEL_SIGNAL\n"
     append_option "" "download-dir:" "\t\tThe directory to save downloads in."\
-"\n\t\t\tDefault: \$XDG_DATA_DIR/youtubed\n" 
+"\n\t\t\tDefault: \$XDG_DATA_DIR/youtubed\n"
     append_option "" "exec-after-write:" "\tA command to execute after "\
 "youtube-dl writes a status\n\t\t\tline.\n\t\t\tDefault: $EXEC_AFTER_WRITE\n"
     append_option "" "daemon-dir:" "\t\tThe directory that youtubed keeps its "\
@@ -91,7 +91,7 @@ function usage {
 
 function error_and_exit {
     echo "[youtubed error] $1" >&2
-    echo "[youtubed] exiting" >&2 
+    echo "[youtubed] exiting" >&2
     exit 1
 }
 
@@ -103,13 +103,13 @@ function info {
     echo "[youtubed] $1"
 }
 
-function pango_escape { 
-    local escaped="$1"                                                          
-    escaped=${escaped//</&lt;}                                                  
-    escaped=${escaped//>/&gt;}                                                     
-    escaped=${escaped//&/&amp;}                                                    
-    echo "$escaped"                                                                
-}  
+function pango_escape {
+    local escaped="$1"
+    escaped=${escaped//</&lt;}
+    escaped=${escaped//>/&gt;}
+    escaped=${escaped//&/&amp;}
+    echo "$escaped"
+}
 
 function pango {
 echo "<span color='$1'>$(pango_escape "$2")</span>"
@@ -196,8 +196,8 @@ function write_immediate {
 function write_immediate_temp {
     local TMP_I3TEXT=$(mktemp -p "$DAEMON_DIR" "tmp.XXXXXXXX.i3text")
     write_immediate "$TMP_I3TEXT" "$1"
-    
-    # auto remove after $2 seconds or echo name of temp for manual deletion 
+
+    # auto remove after $2 seconds or echo name of temp for manual deletion
     if [ -n "$2" ]; then
         sleep "$2" && rm "$TMP_I3TEXT" && $EXEC_AFTER_WRITE &
     else
@@ -230,10 +230,10 @@ function download {
         --merge-output-format "$MERGE_FORMAT_STR" "$URL")}
     local YT_EXIT=$?
     info "Set FILENAME: $FILENAME"
-    
+
     rm "$TMP_I3TEXT" 2> /dev/null
     $EXEC_AFTER_WRITE
-    
+
     # Don't do anything if the name lookup failed
     if [ "$YT_EXIT" -ne 0 ] || [ -z "$FILENAME" ]; then
         error "Couldn't download: $URL"
@@ -255,7 +255,7 @@ function download {
     local PID=$!
     info "Spawned youtube-dl with PID: $PID"
     echo $PID > "$DAEMON_DIR"/"$FILENAME".pid
-    
+
     function spawn_notifier {
         local PROGRESS=""
         local FILENAME="$1"
@@ -271,7 +271,7 @@ function download {
                     "$(pango yellow "$FILENAME: $PROGRESS")"
             fi
         done
-        
+
         local MERGE_REQUIRED=1
         local MERGE_NAME="$FILENAME"
         if [ ! -f "$DOWNLOAD_DIR"/"$FILENAME" ] && \
@@ -286,8 +286,8 @@ function download {
             info "$MERGE_NAME: Download appears to be successful"
             info "$MERGE_NAME: getting FULL_FILENAME"
             write_immediate "$DAEMON_DIR"/"$FILENAME".i3text \
-                "$(pango yellow "$FILENAME: Getting full filename")" 
-            # youtube-dl (or rather ffmpeg) will fail at the merge step if 
+                "$(pango yellow "$FILENAME: Getting full filename")"
+            # youtube-dl (or rather ffmpeg) will fail at the merge step if
             # filename is too long, hence the need for FULL_FILENAME
             FULL_FILENAME=$(youtube-dl --get-filename --restrict-filenames \
                 -f "$QUALITY_STR" -o "$FORMAT_STR" "$URL")
@@ -307,10 +307,10 @@ function download {
         fi
 
         info "Notifier for FILENAME=$FILENAME, PID=$PID: done notifying"
-        
+
         rm "$DAEMON_DIR"/"$FILENAME".{pid,progress,i3text} 2> /dev/null
         $EXEC_AFTER_WRITE
-    }   
+    }
     spawn_notifier "$FILENAME" "$PID" &
     info "Spawned notifier for FILENAME=$FILENAME, PID=$PID, notifier PID=$!"
 }
@@ -328,7 +328,7 @@ function cancel {
         -f "$QUALITY_STR" -o "$ID_ONLY_FMT" "$URL")}
     local YT_EXIT=$?
     info "Set FILENAME: $FILENAME"
-    
+
     rm "$TMP_I3TEXT" 2> /dev/null
     $EXEC_AFTER_WRITE
 
@@ -342,10 +342,10 @@ function cancel {
     if [ -f "$DAEMON_DIR"/"$FILENAME".pid ]; then
         kill $(cat "$DAEMON_DIR"/"$FILENAME".pid)
     fi
-    
+
     # trigger inotifywait of other thread so it will kill itself
     echo " " > "$DAEMON_DIR"/"$FILENAME".progress
-    
+
     # wait for other thread to kill itself
     if [ -f "$DAEMON_DIR"/"$FILENAME".pid ]; then
         inotifywait -q -q -t 5 -e delete_self "$DAEMON_DIR"/"$FILENAME".pid
@@ -388,7 +388,7 @@ function die {
     exit 0
 }
 
-function command_loop {   
+function command_loop {
     trap download "$DOWNLOAD_SIGNAL"
     trap cancel "$CANCEL_SIGNAL"
     trap die SIGTERM SIGINT
@@ -404,11 +404,11 @@ function command_loop {
             quality) quality "$ARGS";;
             die) die;;
         esac
-    }   
+    }
 
     while true; do
         read line <"$DAEMON_DIR"/"$FIFO" && dispatch_command $line &
-        wait $! 
+        wait $!
         if [ -f "$DAEMON_DIR"/"quality" ]; then
             QUALITY_STR=$(cat "$DAEMON_DIR"/"quality")
             rm "$DAEMON_DIR"/"quality"

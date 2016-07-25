@@ -1,4 +1,5 @@
 #!/bin/bash
+#this is a hack if the bluetooth device isn't getting recognized properly
 
 BLUEZCARD=`pactl list cards short | egrep -o bluez.*[[:space:]]`
 pactl set-card-profile $BLUEZCARD a2dp

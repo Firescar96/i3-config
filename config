@@ -101,10 +101,8 @@ for_window [class="^.*"] border pixel 1
 new_window 1pixel
 
 #Application Specific
-for_window [class="Spotify"] floating enable
+#for_window [class="dota2"] floating disable
 for_window [class="Gnome-terminal"] floating enable
-no_focus [class="mpv"]
-for_window [class="mpv"] focus_on_window_activation none
 
 #Workspace Allocation
 workspace 1 output HDMI1
@@ -148,31 +146,32 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
-        # These bindings trigger as soon as you enter the resize mode
+  # These bindings trigger as soon as you enter the resize mode
 
-        # Pressing left will shrink the window’s width.
-        # Pressing right will grow the window’s width.
-        # Pressing up will shrink the window’s height.
-        # Pressing down will grow the window’s height.
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym semicolon resize grow width 10 px or 10 ppt
+  # Pressing left will shrink the window’s width.
+  # Pressing right will grow the window’s width.
+  # Pressing up will shrink the window’s height.
+  # Pressing down will grow the window’s height.
+  bindsym j resize shrink width 10 px or 10 ppt
+  bindsym k resize grow height 10 px or 10 ppt
+  bindsym l resize shrink height 10 px or 10 ppt
+  bindsym semicolon resize grow width 10 px or 10 ppt
 
-        # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+  # same bindings, but for the arrow keys
+  bindsym Left resize shrink width 10 px or 10 ppt
+  bindsym Down resize grow height 10 px or 10 ppt
+  bindsym Up resize shrink height 10 px or 10 ppt
+  bindsym Right resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+  # back to normal: Enter or Escape
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
 }
 
 bindsym $mod+r mode "resize"
 
 #Natural KBDBacklight
+#Does not work on msi backlight keyboards, that config is coming soon
 bindsym XF86KbdBrightnessUp exec /home/firescar96/.i3/kbdlightup
 bindsym XF86KbdBrightnessDown exec /home/firescar96/.i3/kbdlightdown
 bindsym $super+F3 exec /home/firescar96/.i3/kbdlightdown
@@ -185,30 +184,18 @@ bindsym $super+F5 exec xbacklight -steps 1 -time 0 -dec 5
 bindsym $super+F6 exec xbacklight -steps 1 -time 0 -inc 5
 
 #Natural Audio Controls
-#bindsym XF86AudioLowerVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
-#bindsym XF86AudioRaiseVolume exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
-#bindsym XF86AudioMute exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
-#bindsym $super+F11 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
-#bindsym $super+F12 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
-#bindsym $super+F10 exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
-#bindsym Control+F11 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'; ~/.i3/i3barReload"
-#bindsym Control+F12 exec "/usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'; ~/.i3/i3barReload"
-#bindsym Control+F10 exec "/usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle; ~/.i3/i3barReload"
-
 bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
 bindsym XF86AudioRaiseVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
 bindsym XF86AudioMute exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym $super+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
-bindsym $super+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '+5%'
-bindsym $super+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym Control+F11 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'
-bindsym Control+F12 exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
-bindsym Control+F10 exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym Control+Left exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '-5%'
+bindsym Control+Right exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
+bindsym Control+KP_Insert exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 
-#Screensaver
-exec_always --no-startup-id ~/.i3/BlankBurner
-bindsym Control+$mod+l exec xautolock -locknow
-bindsym $super+l exec xautolock -locknow
+#Escape Methods
+bindsym Control+$mod+l exec i3lock
+bindsym $super+l exec i3lock
+bindsym XF86Sleep exec systemctl hibernate
+bindsym $mod+F12 exec systemctl suspend
 
 #Screenshot
 bindsym --release Print exec --no-startup-id import ~/Pictures/screenshots/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
@@ -250,12 +237,9 @@ bar {
 }
 
 #Base Applicaions
-exec --no-startup-id dbus-send --session --dest=org.gnome.SessionManager /org/gnome/SessionManager org.gnome.SessionManager.RegisterClient string:i3.desktop string:''
 exec --no-startup-id /home/firescar96/.i3/DeadBurner
 exec --no-startup-id /home/firescar96/.i3/youtubed/youtubed --download-dir=~/Videos/youtubed --media-cmd=""
 #exec_always --no-startup-id compton --backend glx --paint-on-overlay --glx-no-stencil --vsync opengl-swc --shadow-exclude "! name~=''" -b --config /home/firescar96/.i3/compton.conf
-
-#exec_always --no-startup-id nitrogen --restore
 
 #Gaps
 gaps inner 10
@@ -268,35 +252,35 @@ set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
 bindsym $mod+g mode "$mode_gaps"
 
 mode "$mode_gaps" {
-        bindsym o      mode "$mode_gaps_outer"
-        bindsym i      mode "$mode_gaps_inner"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+  bindsym o      mode "$mode_gaps_outer"
+  bindsym i      mode "$mode_gaps_inner"
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
 }
 
 mode "$mode_gaps_inner" {
-        bindsym plus  gaps inner current plus 5
-        bindsym minus gaps inner current minus 5
-        bindsym 0     gaps inner current set 0
+  bindsym plus  gaps inner current plus 5
+  bindsym minus gaps inner current minus 5
+  bindsym 0     gaps inner current set 0
 
-        bindsym Shift+plus  gaps inner all plus 5
-        bindsym Shift+minus gaps inner all minus 5
-        bindsym Shift+0     gaps inner all set 0
+  bindsym Shift+plus  gaps inner all plus 5
+  bindsym Shift+minus gaps inner all minus 5
+  bindsym Shift+0     gaps inner all set 0
 
-	bindsym o      mode "$mode_gaps_outer"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+  bindsym o      mode "$mode_gaps_outer"
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
 }
 mode "$mode_gaps_outer" {
-        bindsym plus  gaps outer current plus 5
-        bindsym minus gaps outer current minus 5
-        bindsym 0     gaps outer current set 0
+  bindsym plus  gaps outer current plus 5
+  bindsym minus gaps outer current minus 5
+  bindsym 0     gaps outer current set 0
 
-        bindsym Shift+plus  gaps outer all plus 5
-        bindsym Shift+minus gaps outer all minus 5
-        bindsym Shift+0     gaps outer all set 0
+  bindsym Shift+plus  gaps outer all plus 5
+  bindsym Shift+minus gaps outer all minus 5
+  bindsym Shift+0     gaps outer all set 0
 
-        bindsym i      mode "$mode_gaps_inner"
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+  bindsym i      mode "$mode_gaps_inner"
+  bindsym Return mode "default"
+  bindsym Escape mode "default"
 }

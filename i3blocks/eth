@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-INTERFACE="enp2s0"
+INTERFACE="enp4s0"
 
 state="$(cat /sys/class/net/$INTERFACE/operstate)"
 
@@ -35,3 +35,7 @@ ipaddr="${ipaddr:-0.0.0.0}"
 # full text
 echo -n "$ipaddr"
 [ -n "$speed" ] && echo " ($speed Mbits/s)" || echo
+#short text
+echo ""
+#color
+echo "#00FF00"

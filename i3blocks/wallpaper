@@ -1,6 +1,6 @@
 #! /bin/bash
 WALLPAPERSDIR="/home/firescar96/Pictures/wallpaper/"
-xrandr | grep "HDMI2 connected" >> /dev/null
+xrandr | grep "HDMI.* connected" >> /dev/null
 if [ "$?" -eq 0 ]
 then
   WALLPAPERS=$WALLPAPERSDIR"dual"

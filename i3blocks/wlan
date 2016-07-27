@@ -12,8 +12,8 @@ then
   exit 0
 fi
 
-ssid=$(/sbin/iw dev wlan0 link | grep SSID | cut -d ":" -f 2)
-speed=$(/sbin/iw dev wlan0 link | grep bitrate | cut -d " " -f 3)" Mbits/s"
+ssid=$(/sbin/iw dev $INTERFACE link | grep SSID | cut -d ":" -f 2)
+speed=$(/sbin/iw dev $INTERFACE link | grep bitrate | cut -d " " -f 3)" Mbits/s"
 
 ipaddr="$(ip addr show $INTERFACE | perl -n -e'/inet (.+)\// && print $1')"
 ipaddr="${ipaddr:-0.0.0.0}"

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [[ "$BLOCK_INSTANCE" == "฿->\$" ]];then
+  VALUE=$(curl -s 'https://blockchain.info/ticker'|jq '.["USD"]["15m"]' || echo '…')
+  VALUE=$(bc <<< "scale=3; $(echo $VALUE)")
+fi
+
+if [[ "$BLOCK_INSTANCE" == "฿->Ξ" ]];then
+  VALUE=$(curl -s 'https://poloniex.com/public?command=returnTicker'|jq '.BTC_ETH.last'| sed -e 's/^"//'  -e 's/"$//' || echo '0')
+  VALUE=$(bc <<< "scale=3; 1 / $(echo $VALUE)")
+fi
+
+if [[ "$BLOCK_INSTANCE" == "Ξ->ΞC" ]];then
+  VALUE=$(curl -s 'https://poloniex.com/public?command=returnTicker'|jq '.ETH_ETC.last'| sed -e 's/^"//'  -e 's/"$//' || echo '0')
+  VALUE=$(bc <<< "scale=3; 1 / $(echo $VALUE)")
+fi
+
+echo $BLOCK_INSTANCE $VALUE

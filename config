@@ -28,7 +28,7 @@ font pango:DejaVu Sans Mono, FontAwesome, Ionicons, 9
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+t exec xfce4-terminal
+bindsym $mod+Tab exec xfce4-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -101,12 +101,12 @@ for_window [class="^.*"] border pixel 1
 new_window 1pixel
 
 #Application Specific
-for_window [class="dota2"] floating disable
+for_window [class="dota2"] floating enable
 for_window [class="Gnome-terminal"] floating enable
 
 #Workspace Allocation
-workspace 1 output HDMI-2
-workspace 2 output eDP-1
+workspace 2 output HDMI-2
+workspace 1 output eDP-1
 workspace 3 output HDMI-2
 workspace 4 output eDP-1
 workspace 5 output HDMI-2
@@ -170,18 +170,11 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-#Natural KBDBacklight
-#Does not work on msi backlight keyboards, that config is coming soon
-bindsym XF86KbdBrightnessUp exec /home/firescar96/.i3/kbdlightup
-bindsym XF86KbdBrightnessDown exec /home/firescar96/.i3/kbdlightdown
-bindsym $super+F3 exec /home/firescar96/.i3/kbdlightdown
-bindsym $super+F4 exec /home/firescar96/.i3/kbdlightup
-
 #Natural MonBacklight Controls
-bindsym XF86MonBrightnessDown exec xbacklight -steps 1 -time 0 -dec 5
-bindsym XF86MonBrightnessUp exec xbacklight -steps 1 -time 0 -inc 5
-bindsym $super+F5 exec xbacklight -steps 1 -time 0 -dec 5
-bindsym $super+F6 exec xbacklight -steps 1 -time 0 -inc 5
+bindsym XF86MonBrightnessDown exec ~/.i3/backlight -d 10
+bindsym XF86MonBrightnessUp exec ~/.i3/backlight -i 10
+bindsym $super+F5 exec ~/.i3/backlight -d 10
+bindsym $super+F6 exec ~/.i3/backlight -i 10
 
 #Natural Audio Controls
 bindsym XF86AudioLowerVolume exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ -- '-5%'
@@ -192,10 +185,10 @@ bindsym Control+Right exec /usr/bin/pactl set-sink-volume @DEFAULT_SINK@ '+5%'
 bindsym Control+KP_Insert exec /usr/bin/pactl set-sink-mute @DEFAULT_SINK@ toggle
 
 #Escape Methods
-bindsym Control+$mod+l exec i3lock
-bindsym $super+l exec i3lock
+bindsym Control+$mod+l exec i3lock -eft -i /home/firescar96/Pictures/garnet.png
+bindsym $super+l exec i3lock -eft -i /home/firescar96/Pictures/garnet.png
 bindsym XF86Sleep exec systemctl hibernate
-bindsym $mod+F12 exec systemctl suspend
+bindsym $mod+F12 exec systemctl hibernate
 
 #Screenshot
 bindsym --release Print exec --no-startup-id import ~/Pictures/screenshots/screenshot-`/bin/date +%Y%m%d-%H:%M:%S`.png
@@ -239,7 +232,8 @@ bar {
 #Base Applicaions
 exec --no-startup-id /home/firescar96/.i3/DeadBurner
 exec --no-startup-id /home/firescar96/.i3/youtubed/youtubed --download-dir=~/Videos/youtubed --media-cmd=""
-exec_always --no-startup-id compton --backend glx --paint-on-overlay --glx-no-stencil --vsync opengl-swc --shadow-exclude "! name~=''" -b --config /home/firescar96/.i3/compton.conf
+#exec_always --no-startup-id compton --backend glx --paint-on-overlay --glx-no-stencil --vsync opengl-swc --shadow-exclude "! name~=''" -b --config /home/firescar96/.i3/compton.conf
+exec udevadm trigger --subsystem-match=input --action=change
 
 #Gaps
 gaps inner 10

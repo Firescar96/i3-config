@@ -1,5 +1,5 @@
 #! /bin/bash
-WALLPAPERSDIR="/home/firescar96/Pictures/wallpaper/"
+WALLPAPERSDIR="/home/firescar96/Videos/wallpaper/"
 xrandr | grep "HDMI.* connected" >> /dev/null
 if [ "$?" -eq 0 ]
 then
@@ -23,7 +23,7 @@ then
   nitrogen --set-centered $WALLPAPERSDIR/blackbg.png --set-color=#000000
   killer="ps aux | grep 'title wallpaper' | awk '{print \$2;}' | xargs kill"
   echo $killer | at now + 2 minute
-  mplayer -ao null -rootwin -title wallpaper $WALLPAPERS/${ALIST[$number]} -loop 1000 > /dev/null
+  mplayer -ao null -rootwin -title wallpaper $WALLPAPERS/${ALIST[$number]} -loop 1000 -zoom > /dev/null
   nitrogen --restore
 else
   nitrogen --set-centered --save $WALLPAPERS/${ALIST[$number]}

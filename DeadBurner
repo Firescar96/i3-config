@@ -26,7 +26,7 @@ while [ true ]; do
             fi
 	    if [[ $rem_bat -le $HIBERNATE_PERCENT ]]; then
                 SLEEP_TIME=2
-                sudo hibernate
+                pm-hibernate
             fi
         fi
     else

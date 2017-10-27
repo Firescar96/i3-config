@@ -14,6 +14,7 @@ use Getopt::Long;
 # default values
 my $t_warn = 50;
 my $t_crit = 80;
+my $cpu_idle = 0;
 my $cpu_usage = -1;
 
 sub help {
@@ -29,16 +30,10 @@ GetOptions("help|h" => \&help,
 
 # Get CPU usage
 $ENV{LC_ALL}="en_US"; # if mpstat is not run under en_US locale, things may break, so make sure it is
-open (MPSTAT, 'mpstat 1 1 |') or die;
-while (<MPSTAT>) {
-    if (/^Average:\s+all\s+(\d+\.\d+)\s+\d+\.\d+\s+(\d+\.\d+)/) {
-        $cpu_usage = $1 + $2; # %usr + %sys
-        last;
-    }
-}
-close(MPSTAT);
 
-$cpu_usage eq -1 and die 'Can\'t find CPU information';
+$cpu_idle = `mpstat 1 1 | grep -a "all" |head -n1| cut -d ' ' -f45`;
+chomp($cpu_idle); #remove newline
+$cpu_usage = 100-$cpu_idle;
 
 # Print short_text, full_text
 printf "%.2f%%\n", $cpu_usage;

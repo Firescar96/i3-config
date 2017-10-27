@@ -1,0 +1,2 @@
+sync && /sbin/sysctl -w vm.drop_caches=3 && /sbin/sysctl -w vm.drop_caches=2
+/usr/sbin/hibernate

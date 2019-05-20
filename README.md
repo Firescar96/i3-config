@@ -29,6 +29,11 @@ See the [Airblader Wiki](https://github.com/Airblader/i3/wiki/Compiling-&-Instal
 #### msi-keyboard/msi-keyboard-gui
 electron
 
+#### optirun
+My laptop has a dedicated graphics card which needs the debian bumblebee package to run.
+This was somewhat tricky to debug, but I had to use the proprietary nvidia drivers to get it working :-(
+bumblebee-nvidia primus libgl1-mesa-glx libgl1-nvidia-glx nvidia-driver
+
 Highlights
 ==========
 -Uses both xfce4-terminal and gnome-terminal

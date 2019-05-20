@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INTERFACE="wlp2s0"
+INTERFACE="wlp3s0"
 
 state="$(cat /sys/class/net/$INTERFACE/operstate)"
 
@@ -13,14 +13,14 @@ then
 fi
 
 ssid=$(/sbin/iw dev $INTERFACE link | grep SSID | cut -d ":" -f 2)
-speed=$(/sbin/iw dev $INTERFACE link | grep bitrate | cut -d " " -f 3)" Mbits/s"
+rxspeed=$(/sbin/iw dev $INTERFACE link | grep "rx bitrate" | cut -d " " -f 3)
 
 ipaddr="$(ip addr show $INTERFACE | perl -n -e'/inet (.+)\// && print $1')"
 ipaddr="${ipaddr:-0.0.0.0}"
 
 # full text
-echo "$ipaddr ($speed)  $ssid"
+echo "$ipaddr ($rxspeed Mbits/s) $ssid"
 #short text
 echo ""
 #color
-echo "#00FF00"
+echo "#00ff00"

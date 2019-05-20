@@ -37,7 +37,7 @@ SCONTROL="${BLOCK_INSTANCE:-$(amixer -D $MIXER scontrols |
 
 # The first parameter sets the step to change the volume by (and units to display)
 # This may be in in % or dB (eg. 5% or 3dB)
-STEP="${1:-5%}"
+STEP="${1:-2%}"
 
 #------------------------------------------------------------------------
 

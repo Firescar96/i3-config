@@ -3,8 +3,8 @@
 SLEEP_TIME=5   # Default time between checks.
 SAFE_PERCENT=30  # Still safe at this level.
 DANGER_PERCENT=15  # Warn when battery at this level.
-CRITICAL_PERCENT=7  # Final Notice when battery at this level.
-HIBERNATE_PERCENT=3 #Hibernate at this level
+CRITICAL_PERCENT=11  # Final Notice when battery at this level.
+HIBERNATE_PERCENT=7 #Hibernate at this level
 
 export DISPLAY=:0.0
  

@@ -206,7 +206,7 @@ bindsym Control+$mod+up move container to output up
 bindsym Control+$mod+down move container to output down
 
 #Settings
-bindsym Control+$mod+s exec gnome-control-center
+bindsym Control+$mod+s exec env XDG_CURRENT_DESKTOP=GNOME gnome-control-center
 
 #Floating Terminal
 bindsym $super+a exec /home/firescar96/.i3/twilyterm
@@ -234,7 +234,7 @@ exec --no-startup-id /home/firescar96/.i3/DeadBurner
 exec --no-startup-id /home/firescar96/.i3/youtubed/youtubed --download-dir=~/Videos/youtubed --media-cmd=""
 #exec_always --no-startup-id compton --backend glx --paint-on-overlay --glx-no-stencil --vsync opengl-swc --shadow-exclude "! name~=''" -b --config /home/firescar96/.i3/compton.conf
 exec udevadm trigger --subsystem-match=input --action=change
-exec --no-startup-id ~/.i3/i3blocks/wallpaper
+#exec mplayer -ao null -rootwin -title wallpaper /home/firescar96/Videos/wallpaper/mono/vamhA4h.mp4 -loop 1000 -zoom > /dev/null
 
 #Gaps
 gaps inner 10

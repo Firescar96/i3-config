@@ -67,12 +67,15 @@ if ($status eq 'Discharging') {
       $blue=sprintf("%02x", ($bbase+(50-$bbase)*.2) / 50 * 255);
       print "#"."$red$green$blue\n";
 
-  if ($percent < 3) {
+  if ($percent < 5) {
     exit(33);
   }
 }
+elsif($status eq 'Unknown') {
+  print "#555\n";
+}
 else {
-  print "#00FF00";
+  print "#00FF00\n";
 }
 
 exit(0);

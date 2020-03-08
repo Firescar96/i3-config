@@ -13,14 +13,14 @@ then
 fi
 
 ssid=$(/sbin/iw dev $INTERFACE link | grep SSID | cut -d ":" -f 2)
-rxspeed=$(/sbin/iw dev $INTERFACE link | grep "rx bitrate" | cut -d " " -f 3)
+speed=$(/sbin/iw dev $INTERFACE link | grep "rx bitrate" | cut -d " " -f 3)" Mbits/s"
 
 ipaddr="$(ip addr show $INTERFACE | perl -n -e'/inet (.+)\// && print $1')"
 ipaddr="${ipaddr:-0.0.0.0}"
 
 # full text
-echo "$ipaddr ($rxspeed Mbits/s) $ssid"
+echo "$ipaddr ($speed)  $ssid"
 #short text
 echo ""
 #color
-echo "#00ff00"
+echo "#00FF00"

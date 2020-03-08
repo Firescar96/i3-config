@@ -5,11 +5,9 @@ if [[ "$BLOCK_INSTANCE" == "฿->\$" ]];then
   VALUE=$(bc <<< "scale=3; $(echo $VALUE)")
 fi
 
-if [[ "$BLOCK_INSTANCE" == "Ξ->$" ]];then
-  BTCVAL=$(curl -s 'https://blockchain.info/ticker'|jq '.["USD"]["15m"]' || echo '…')
-  #echo "$BTCVAL"
+if [[ "$BLOCK_INSTANCE" == "฿->Ξ" ]];then
   VALUE=$(curl -s 'https://poloniex.com/public?command=returnTicker'|jq '.BTC_ETH.last'| sed -e 's/^"//'  -e 's/"$//' || echo '0')
-  VALUE=$(bc <<< "scale=3; $BTCVAL * $VALUE")
+  VALUE=$(bc <<< "scale=3; 1 / $(echo $VALUE)")
 fi
 
 if [[ "$BLOCK_INSTANCE" == "Ξ->ΞC" ]];then

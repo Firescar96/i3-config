@@ -14,7 +14,7 @@ use Getopt::Long;
 # default values
 my $t_warn = 50;
 my $t_crit = 80;
-my $cpu_idle = -1;
+my $cpu_idle = 0;
 my $cpu_usage = -1;
 
 sub help {
@@ -31,8 +31,9 @@ GetOptions("help|h" => \&help,
 # Get CPU usage
 $ENV{LC_ALL}="en_US"; # if mpstat is not run under en_US locale, things may break, so make sure it is
 
-$cpu_idle = `mpstat 1 1 | grep -a 'all' |head -n1| awk '{print \$12}'`;
+$cpu_idle = `mpstat 1 1 | grep -a "all" |head -n1| awk -F '   ' '{print \$12}'`;
 chomp($cpu_idle); #remove newline
+
 $cpu_usage = 100-$cpu_idle;
 
 # Print short_text, full_text
@@ -41,10 +42,10 @@ printf "%.2f%%\n", $cpu_usage;
 
 # Print color, if needed
 if ($cpu_usage >= $t_crit) {
-    print "#FF0000\n";
+    print "#440000\n";
     exit 33;
 } elsif ($cpu_usage >= $t_warn) {
-    print "#FFFC00\n";
+    print "#444C00\n";
 }
 
 exit 0;

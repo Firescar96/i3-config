@@ -106,7 +106,7 @@ sub playerctl {
     my $artist = qx(playerctl $player_arg metadata artist);
     # exit status will be nonzero when playerctl cannot find your player
     exit(0) if $? || $artist eq '(null)';
-    chomp $artist;
+
     push(@metadata, $artist) if $artist;
 
     my $title = qx(playerctl $player_arg metadata title);
@@ -115,8 +115,8 @@ sub playerctl {
     push(@metadata, $title) if $title;
 
     print(join(" - ", @metadata)) if @metadata;
-    print "\n";
-    print "#ff0000\n";
+    print "\n\n";
+    print "#ff0000";
 }
 
 if ($player_arg eq '' or $player_arg =~ /mpd/) {

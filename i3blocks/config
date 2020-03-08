@@ -79,7 +79,7 @@ separator=false
 [cpu]
 command=~/.i3/i3blocks/cpu_usage
 label=
-interval=10
+interval=1
 separator=false
 
 # Temperature
@@ -98,6 +98,16 @@ separator=false
 [battery]
 command=~/.i3/i3blocks/battery
 interval=1
+instance=0
+separator=false
+
+# Battery indicator
+#
+# The battery instance defaults to 0.
+[battery]
+command=~/.i3/i3blocks/battery
+interval=1
+instance=1
 separator=false
 
 # Volume indicator

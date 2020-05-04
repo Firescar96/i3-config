@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-INTERFACE="enp0s31f6"
+INTERFACE="enp5s0"
 
 state="$(cat /sys/class/net/$INTERFACE/operstate)"
 

@@ -26,13 +26,6 @@ gtk-doc-tools
 #### i3-gaps
 See the [Airblader Wiki](https://github.com/Airblader/i3/wiki/Compiling-&-Installing) for instructions
 
-#### msi-keyboard/msi-keyboard-gui
-electron
-
-#### optirun
-My laptop has a dedicated graphics card which needs the debian bumblebee package to run.
-This was somewhat tricky to debug, but I had to use the proprietary nvidia drivers to get it working :-(
-bumblebee-nvidia primus libgl1-mesa-glx libgl1-nvidia-glx nvidia-driver
 
 Highlights
 ==========
@@ -53,11 +46,3 @@ Highlights
 -battery color smooth gradient, green <-> purple <-> red
 
 -dmenu includes custom aliases in the search bar
-
-Notes
-====
--many of these commands require root access, add a line like this to your sudoers file:
-
-    firescar96 ALL=(ALL) NOPASSWD: /home/firescar96/.i3/*
-
-where "firescar96" is your username
